@@ -159,6 +159,8 @@ function create() {
     }
 
     game.sound.setDecodedCallback([backgroundfx, tapfx, applausefx].concat(randomfx), start, this);
+
+    
 }
 
 function render() {
@@ -171,8 +173,8 @@ function start() {
 }
 
 function update() {
-    if (flow > 0.02) {
-        flow -= 0.02;
+    if (flow > 0.005) {
+        flow -= 0.005;
     }
     setLevel(parseInt(flow));
 }
