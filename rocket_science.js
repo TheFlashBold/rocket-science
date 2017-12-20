@@ -125,7 +125,7 @@ function create() {
     vibrator = game.add.sprite(width * 0.5, height * 0.92, 'vibrator', 0);
     vibrator.scale.set(0.6 * scale);
     vibrator.anchor.setTo(0.5, 0.5);
-    vibrator.animations.add('animate').play(2, true);
+    vibrator.frame = 0;
 
     bells = game.add.sprite(width * 0.85, height * 0.2, 'bells');
     bells.scale.set(scale);
@@ -142,19 +142,19 @@ function create() {
     trump = game.add.sprite(width * 0.2, height * 0.595, 'trump_01');
     trump.scale.set(0.6 * scale);
     trump.anchor.setTo(0.5, 0.5);
-    trump.animations.add('animate').play(0.5 + Math.random(), true);
+    trump.frame = 0;
 
     yun = game.add.sprite(width * 0.5, height * 0.595, 'yun_01');
     yun.scale.set(0.6 * scale);
     yun.anchor.setTo(0.5, 0.5);
-    yun.animations.add('animate').play(0.5 + Math.random(), true);
+    yun.frame = 0;
 
     putin = game.add.sprite(width * 0.8, height * 0.595, 'putin_01');
     putin.scale.set(0.6 * scale);
     putin.anchor.setTo(0.5, 0.5);
-    putin.animations.add('animate').play(0.5 + Math.random(), true);
+    putin.frame = 0;
 
-    merkel = game.add.sprite(width * 1.5, height * 0.175, 'merkel');
+    merkel = game.add.sprite(width * 3, height * 0.175, 'merkel');
     merkel.scale.set(0.6 * scale);
     merkel.anchor.setTo(0.5, 0.5);
 
@@ -208,49 +208,69 @@ function setLevel(level) {
 
     switch(level){
         case 0:
-            merkel.visible = bells.visible = birds.visible = butterfly.visible = false;
             SetFlowerSpeed(false);
+            bells.visible = butterfly.visible = birds.visible = false;
+            vibrator.frame = 0;
             break;
         case 1:
-            game.add.tween(rainbow).to({y: height * 0.445 }, 2000, "Linear", true, 0);
-            birds.visible = true;
-            birds.animations.add('animate').play(2, true);
-            SetFlowerSpeed(3, 0.5);
-            vibrator.animations.currentAnim.speed = 5;
-            rainbow.animations.currentAnim.speed = 3;
-            butterfly.visible = true;
-            butterfly.animations.add('animate').play(2, true);
             vibratorfx_1.loopFull(1);
-            PlaySounds(1000);
+            yun.animations.add('animate').play(0.5 + Math.random(), true);
+            trump.animations.add('animate').play(0.5 + Math.random(), true);
+            putin.animations.add('animate').play(0.5 + Math.random(), true);
+            setTimeout(function () {
+                butterfly.visible = true;
+                butterfly.animations.add('animate').play(2, true);
+            }, 3000);
+            setTimeout(function () {
+                birds.visible = true;
+                birds.animations.add('animate').play(2, true);
+            }, 5000);
+            setTimeout(function () {
+                SetFlowerSpeed(3, 0.5);
+            }, 7000);
+            vibrator.animations.add('animate').play(3, true);
+            PlaySounds(1500);
             break;
         case 2:
+            bells.visible = true;
+            bells.animations.add('animate').play(2, true);
+
+            vibrator.animations.currentAnim.speed = 8;
+
+            butterfly.animations.currentAnim.speed = 5;
+            birds.animations.currentAnim.speed = 4;
+
+            vibratorfx_1.stop();
+            vibratorfx_2.loopFull(1);
+
+            setTimeout(function () {
+                game.add.tween(rainbow).to({y: height * 0.445 }, 2000, "Linear", true, 0);
+                rainbow.animations.currentAnim.speed = 3;
+            }, 3000);
+
+            PlaySounds(1000);
+            break;
+        case 3:
             trump.loadTexture('trump_02');
             trump.animations.add('animate').play(0.5 + Math.random(), true);
             yun.loadTexture('yun_02');
             yun.animations.add('animate').play(0.5 + Math.random(), true);
             putin.loadTexture('putin_02');
             putin.animations.add('animate').play(0.5 + Math.random(), true);
-            bells.visible = true;
-            bells.animations.add('animate').play(2, true);
-            vibrator.animations.currentAnim.speed = 8;
-            rainbow.animations.currentAnim.speed = 5;
-            butterfly.animations.currentAnim.speed = 5;
-            birds.animations.currentAnim.speed = 4;
-            vibratorfx_1.stop();
-            vibratorfx_2.loopFull(1);
-            PlaySounds(600);
-            break;
-        case 3:
+
+
             merkel.visible = true;
             merkel.frame = 1;
-            game.add.tween(merkel).to({x: width * 0.5}, 2000, "Linear", true, 0);
+            game.add.tween(merkel).to({x: width * 0.5}, 5000, "Linear", true, 0);
             setTimeout(function () {
                 merkel.frame = 2;
                 applausefx.play();
-            }, 2250);
+            }, 5250);
+
             birds.animations.currentAnim.speed = 7;
             vibrator.animations.currentAnim.speed = 15;
             rainbow.animations.currentAnim.speed = 7;
+
             vibratorfx_2.stop();
             vibratorfx_3.loopFull(1);
             PlaySounds(200);
@@ -301,5 +321,7 @@ function click() {
         level++;
         setLevel(level);
         console.log("Level " + level);
+    } else {
+
     }
 }
