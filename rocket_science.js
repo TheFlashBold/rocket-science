@@ -360,7 +360,9 @@ function click() {
         setLevel(level);
     } else if(level === 3) {
         level++;
-        maxLevel = 5;
+        setTimeout(function () {
+            maxLevel = 5;
+        }, 1000);
         last_frame.visible = true;
     } else if(level === 4){
         console.log("test");
