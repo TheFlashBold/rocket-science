@@ -117,7 +117,7 @@ function create() {
 
     bmd.draw(background, 0, 0);
 
-    form_affenfels = game.add.sprite(width * 0.5, height * 0.25, 'form_affenfels');
+    form_affenfels = game.add.sprite(width * 0.5, height * 0.1, 'form_affenfels');
     form_affenfels.scale.set(0.6 * scale);
     form_affenfels.anchor.setTo(0.5, 0.5);
 
