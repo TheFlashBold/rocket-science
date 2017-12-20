@@ -349,22 +349,23 @@ function SetFlowerSpeed(speed, chance) {
 }
 
 function click() {
-
     if(level === maxLevel){
         return;
     }
-
     heart.visible = false;
 
     if(level < 3){
         tapfx.play();
         level++;
         setLevel(level);
-        console.log("Level " + level);
     } else if(level === 3) {
         level++;
+        maxLevel = 5;
         last_frame.visible = true;
-    } else {
+    } else if(level === 4){
+        console.log("test");
         window.location = "http://www.fraublum.de/from-affenfels-with-love";
     }
+
+    console.log("Level " + level);
 }
