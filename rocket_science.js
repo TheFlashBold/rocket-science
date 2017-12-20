@@ -221,6 +221,7 @@ function setLevel(level) {
             butterfly.visible = true;
             butterfly.animations.add('animate').play(2, true);
             vibratorfx_1.loopFull(1);
+            PlaySounds(1000);
             break;
         case 2:
             trump.loadTexture('trump_02');
@@ -237,6 +238,7 @@ function setLevel(level) {
             birds.animations.currentAnim.speed = 4;
             vibratorfx_1.stop();
             vibratorfx_2.loopFull(1);
+            PlaySounds(600);
             break;
         case 3:
             merkel.visible = true;
@@ -251,11 +253,23 @@ function setLevel(level) {
             rainbow.animations.currentAnim.speed = 7;
             vibratorfx_2.stop();
             vibratorfx_3.loopFull(1);
+            PlaySounds(200);
             break;
     }
 }
 
 var sound;
+
+var playinterval;
+
+function PlaySounds(delay) {
+    if(playinterval){
+        clearInterval(playinterval);
+    }
+    playinterval = setInterval(function () {
+        PlayRandomSound();
+    }, delay);
+}
 
 function PlayRandomSound() {
     if (!sound || (sound && !sound.isPlaying)) {
