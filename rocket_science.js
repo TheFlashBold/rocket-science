@@ -20,6 +20,9 @@ function preload() {
     game.load.spritesheet('birds', 'assets/sprite_birds_83x63.svg', 83, 63, 2);
     game.load.spritesheet('butterfly', 'assets/sprite_butterfly_147x174.svg', 147, 174, 2);
     game.load.spritesheet('rainbow_done', 'assets/sprite_rainbow_done_675x596.svg', 675, 596, 10);
+    game.load.spritesheet('heart', 'assets/sprite_heart_55x50.svg', 55, 50, 2);
+    game.load.spritesheet('form_affenfels', 'assets/from_affenfels_with_love.svg', 580, 94, 1);
+    game.load.spritesheet('last_frame', 'assets/last_frame.jpg', 750, 1114, 1);
 
     game.load.spritesheet('trump_01', 'assets/sprite_trump_200x265_1.svg', 200, 265, 2);
     game.load.spritesheet('yun_01', 'assets/sprite_yun_200x265_1.svg', 200, 265, 2);
@@ -114,6 +117,10 @@ function create() {
 
     bmd.draw(background, 0, 0);
 
+    form_affenfels = game.add.sprite(width * 0.5, height * 0.25, 'form_affenfels');
+    form_affenfels.scale.set(0.6 * scale);
+    form_affenfels.anchor.setTo(0.5, 0.5);
+
     rainbow = game.add.sprite(width * 0.5, height * 1.5, 'rainbow_done');
     rainbow.scale.set(0.6 * scale);
     rainbow.anchor.setTo(0.5, 0.5);
@@ -127,6 +134,12 @@ function create() {
     vibrator.scale.set(0.6 * scale);
     vibrator.anchor.setTo(0.5, 0.5);
     vibrator.frame = 0;
+
+    heart = game.add.sprite(width * 0.47, height * 0.92, 'heart', 0);
+    heart.scale.set(2 * scale);
+    heart.anchor.setTo(0.5, 0.5);
+    heart.animations.add('animate').play(1.5 + Math.random(), true);
+    heart.visible = false;
 
     bells = game.add.sprite(width * 0.85, height * 0.2, 'bells');
     bells.scale.set(scale);
@@ -183,6 +196,11 @@ function create() {
         flowers.push(f);
     }
 
+    last_frame = game.add.sprite(width * 0.5, height * 0.5, 'last_frame');
+    last_frame.scale.set(0.6 * scale);
+    last_frame.anchor.setTo(0.5, 0.5);
+    last_frame.visible = false;
+
     game.sound.setDecodedCallback([backgroundfx, tapfx, applausefx].concat(randomfx), start, this);
 
     setLevel(0);
@@ -213,6 +231,7 @@ function setLevel(level) {
             bells.visible = butterfly.visible = birds.visible = false;
             vibrator.frame = 0;
             maxLevel = 1;
+            heart.visible = true;
             break;
         case 1:
             vibratorfx_1.loopFull(1);
@@ -234,6 +253,7 @@ function setLevel(level) {
             PlaySounds(1500);
             setTimeout(function () {
                 maxLevel = 2;
+                heart.visible = true;
             }, 8000);
             break;
         case 2:
@@ -256,6 +276,7 @@ function setLevel(level) {
             PlaySounds(1000);
             setTimeout(function () {
                 maxLevel = 3;
+                heart.visible = true;
             }, 4000);
             break;
         case 3:
@@ -284,6 +305,7 @@ function setLevel(level) {
             PlaySounds(200);
             setTimeout(function () {
                 maxLevel = 4;
+                heart.visible = true;
             }, 6000);
             break;
     }
@@ -327,16 +349,22 @@ function SetFlowerSpeed(speed, chance) {
 }
 
 function click() {
+
     if(level === maxLevel){
         return;
     }
+
+    heart.visible = false;
 
     if(level < 3){
         tapfx.play();
         level++;
         setLevel(level);
         console.log("Level " + level);
+    } else if(level === 3) {
+        level++;
+        last_frame.visible = true;
     } else {
-
+        //window.location = "";
     }
 }
