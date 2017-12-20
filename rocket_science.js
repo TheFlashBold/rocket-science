@@ -58,6 +58,7 @@ function preload() {
 }
 
 var level = 0;
+var maxLevel = 0;
 
 var randomSounds = ['vox_1', 'vox_2', 'vox_3', 'vox_4', 'vox_5', 'vox_6', 'vox_7', 'vox_8', 'spank_1', 'spank_2', 'spank_3'];
 
@@ -211,6 +212,7 @@ function setLevel(level) {
             SetFlowerSpeed(false);
             bells.visible = butterfly.visible = birds.visible = false;
             vibrator.frame = 0;
+            maxLevel = 1;
             break;
         case 1:
             vibratorfx_1.loopFull(1);
@@ -230,6 +232,9 @@ function setLevel(level) {
             }, 7000);
             vibrator.animations.add('animate').play(3, true);
             PlaySounds(1500);
+            setTimeout(function () {
+                maxLevel = 2;
+            }, 8000);
             break;
         case 2:
             bells.visible = true;
@@ -249,6 +254,9 @@ function setLevel(level) {
             }, 3000);
 
             PlaySounds(1000);
+            setTimeout(function () {
+                maxLevel = 3;
+            }, 4000);
             break;
         case 3:
             trump.loadTexture('trump_02');
@@ -274,6 +282,9 @@ function setLevel(level) {
             vibratorfx_2.stop();
             vibratorfx_3.loopFull(1);
             PlaySounds(200);
+            setTimeout(function () {
+                maxLevel = 4;
+            }, 6000);
             break;
     }
 }
@@ -316,6 +327,10 @@ function SetFlowerSpeed(speed, chance) {
 }
 
 function click() {
+    if(level === maxLevel){
+        return;
+    }
+
     if(level < 3){
         tapfx.play();
         level++;
