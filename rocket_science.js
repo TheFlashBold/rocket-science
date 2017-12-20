@@ -365,6 +365,6 @@ function click() {
         level++;
         last_frame.visible = true;
     } else {
-        //window.location = "";
+        window.location = "http://www.fraublum.de/from-affenfels-with-love";
     }
 }
