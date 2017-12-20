@@ -11,57 +11,75 @@ var game = new Phaser.Game(width, height, Phaser.CANVAS, 'phaser-example', {
 
 function preload() {
     game.load.image('background', 'assets/background.svg');
-    game.load.image('blanket', 'assets/blanket.svg');
+    game.load.spritesheet('blanket', 'assets/blanket.svg', 750, 310, 1);
 
     game.load.spritesheet('flowers', 'assets/sprite_flowers_hearts_128x112.svg', 128, 112, 11);
-    game.load.spritesheet('vibrator', 'assets/sprite_vibrator_586x138.svg', 586, 138, 4);
+    game.load.spritesheet('vibrator', 'assets/sprite_vibrator_586_x152.svg', 586, 152, 3);
     game.load.spritesheet('feet', 'assets/sprite_feet_161x85.svg', 161, 85, 3);
     game.load.spritesheet('bells', 'assets/sprite_bells_97x65.svg', 97, 65, 2);
     game.load.spritesheet('birds', 'assets/sprite_birds_83x63.svg', 83, 63, 2);
     game.load.spritesheet('butterfly', 'assets/sprite_butterfly_147x174.svg', 147, 174, 2);
-    game.load.spritesheet('rainbow', 'assets/sprite_rainbow_675x596.svg', 675, 596, 10);
     game.load.spritesheet('rainbow_done', 'assets/sprite_rainbow_done_675x596.svg', 675, 596, 10);
 
-    game.load.spritesheet('trump', 'assets/sprite_trump_200x265.svg', 200, 265, 3);
-    game.load.spritesheet('yun', 'assets/sprite_yun_200x265.svg', 200, 265, 3);
-    game.load.spritesheet('putin', 'assets/sprite_putin_200x265.svg', 200, 265, 3);
+    game.load.spritesheet('trump_01', 'assets/sprite_trump_200x265_1.svg', 200, 265, 2);
+    game.load.spritesheet('yun_01', 'assets/sprite_yun_200x265_1.svg', 200, 265, 2);
+    game.load.spritesheet('putin_01', 'assets/sprite_putin_200x265_1.svg', 200, 265, 2);
+
+    game.load.spritesheet('trump_02', 'assets/sprite_trump_200x265_2.svg', 200, 265, 2);
+    game.load.spritesheet('yun_02', 'assets/sprite_yun_200x265_2.svg', 200, 265, 2);
+    game.load.spritesheet('putin_02', 'assets/sprite_putin_200x265_2.svg', 200, 265, 2);
 
     game.load.spritesheet('merkel', 'assets/sprite_merkel_452x452.svg', 452, 452, 2);
 
     game.load.audio('background', 'assets/background_loop.mp3');
-    game.load.audio('vibrator', 'assets/vibrator_loop.mp3');
+    game.load.audio('vibrator_01', 'assets/vibrator_loop_01.mp3');
+    game.load.audio('vibrator_02', 'assets/vibrator_loop_02.mp3');
+    game.load.audio('vibrator_03', 'assets/vibrator_loop_03.mp3');
     game.load.audio('tap', 'assets/heart_tap.mp3');
     game.load.audio('applause', 'assets/merkel_applause.mp3');
 
     game.load.audio('vox_1', 'assets/random_vox_01.mp3');
-    game.load.audio('vox_2', 'assets/random_vox_02.mp3');
-    game.load.audio('vox_3', 'assets/random_vox_03.mp3');
-    game.load.audio('vox_4', 'assets/random_vox_04.mp3');
-    game.load.audio('vox_5', 'assets/random_vox_05.mp3');
-    game.load.audio('vox_6', 'assets/random_vox_06.mp3');
-    game.load.audio('vox_7', 'assets/random_vox_07.mp3');
-    game.load.audio('vox_8', 'assets/random_vox_08.mp3');
+
+    var i;
+    for(i = 1; i <= 10; i++){
+        game.load.audio('vox_yun_' + i, 'assets/vox_yun_' + ("0" + i).slice(-2) + '.mp3');
+    }
+    for(i = 1; i <= 7; i++){
+        game.load.audio('vox_trump_' + i, 'assets/vox_trump_' + ("0" + i).slice(-2) + '.mp3');
+    }
+    for(i = 1; i <= 7; i++){
+        game.load.audio('vox_putin_' + i, 'assets/vox_putin_' + ("0" + i).slice(-2) + '.mp3');
+    }
+    for(i = 1; i <= 5; i++){
+        game.load.audio('spank_' + i, 'assets/spank_' + ("0" + i).slice(-2) + '.mp3');
+    }
 
     game.load.audio('spank_1', 'assets/random_spank_01.mp3');
-    game.load.audio('spank_2', 'assets/random_spank_02.mp3');
-    game.load.audio('spank_3', 'assets/random_spank_03.mp3');
 }
 
-var flow = 0;
-var lastLevel = -1;
-var idToClick = 2;
-var lastId = 0;
+var level = 0;
 
 var randomSounds = ['vox_1', 'vox_2', 'vox_3', 'vox_4', 'vox_5', 'vox_6', 'vox_7', 'vox_8', 'spank_1', 'spank_2', 'spank_3'];
+
+var i;
+for(i = 1; i <= 10; i++){
+    randomSounds.push('vox_yun_' + i);
+}
+for(i = 1; i <= 7; i++){
+    randomSounds.push('vox_trump_' + i);
+}
+for(i = 1; i <= 7; i++){
+    randomSounds.push('vox_putin_' + i);
+}
+for(i = 1; i <= 5; i++){
+    randomSounds.push('spank_' + i);
+}
+
 var randomfx = [];
 
 var bmd;
-var loop;
-
-var done = false;
 
 var flowers = [];
-
 var flowerpos = [
     {x: 0.83, y: 0.31},
     {x: 0.69, y: 0.43},
@@ -73,7 +91,6 @@ var flowerpos = [
 
 function create() {
     game.input.addPointer();
-
     game.input.onTap.add(tap, this);
 
     for (var i = 0; i < randomSounds.length; i++) {
@@ -83,28 +100,32 @@ function create() {
     tapfx = game.add.audio('tap');
     backgroundfx = game.add.audio('background');
     applausefx = game.add.audio('applause');
-    vibratorfx = game.add.audio('vibrator');
+    vibratorfx_1 = game.add.audio('vibrator_01');
+    vibratorfx_2 = game.add.audio('vibrator_02');
+    vibratorfx_3 = game.add.audio('vibrator_03');
 
     background = game.make.sprite(0, 0, 'background');
     background.scale.set(scale);
-    blanket = game.make.sprite(0, 0, 'blanket');
-    blanket.scale.set(0.7 * scale);
 
     bmd = game.add.bitmapData(game.width, game.height);
     bmd.addToWorld();
     bmd.smoothed = false;
 
     bmd.draw(background, 0, 0);
-    bmd.draw(blanket, 0, height * 0.71);
+
+    rainbow = game.add.sprite(width * 0.5, height * 1.5, 'rainbow_done');
+    rainbow.scale.set(0.6 * scale);
+    rainbow.anchor.setTo(0.5, 0.5);
+    rainbow.animations.add('animate').play(2, true);
+
+    blanket = game.add.sprite(0, height * 0.71, 'blanket');
+    blanket.scale.set(0.7 * scale);
+    blanket.animations.add('animate').play(0.5 + Math.random(), true);
 
     vibrator = game.add.sprite(width * 0.5, height * 0.92, 'vibrator', 0);
     vibrator.scale.set(0.6 * scale);
     vibrator.anchor.setTo(0.5, 0.5);
-    vibrator.frame = idToClick;
-
-    rainbow = game.add.sprite(width * 0.5, height * 0.445, 'rainbow');
-    rainbow.scale.set(0.6 * scale);
-    rainbow.anchor.setTo(0.5, 0.5);
+    vibrator.animations.add('animate').play(2, true);
 
     bells = game.add.sprite(width * 0.85, height * 0.2, 'bells');
     bells.scale.set(scale);
@@ -118,19 +139,22 @@ function create() {
     butterfly.scale.set(scale * 0.6);
     butterfly.anchor.setTo(0.5, 0.5);
 
-    trump = game.add.sprite(width * 0.2, height * 0.595, 'trump');
+    trump = game.add.sprite(width * 0.2, height * 0.595, 'trump_01');
     trump.scale.set(0.6 * scale);
     trump.anchor.setTo(0.5, 0.5);
+    trump.animations.add('animate').play(0.5 + Math.random(), true);
 
-    yun = game.add.sprite(width * 0.5, height * 0.595, 'yun');
+    yun = game.add.sprite(width * 0.5, height * 0.595, 'yun_01');
     yun.scale.set(0.6 * scale);
     yun.anchor.setTo(0.5, 0.5);
+    yun.animations.add('animate').play(0.5 + Math.random(), true);
 
-    putin = game.add.sprite(width * 0.8, height * 0.595, 'putin');
+    putin = game.add.sprite(width * 0.8, height * 0.595, 'putin_01');
     putin.scale.set(0.6 * scale);
     putin.anchor.setTo(0.5, 0.5);
+    putin.animations.add('animate').play(0.5 + Math.random(), true);
 
-    merkel = game.add.sprite(width * 0.5, height * 0.175, 'merkel');
+    merkel = game.add.sprite(width * 1.5, height * 0.175, 'merkel');
     merkel.scale.set(0.6 * scale);
     merkel.anchor.setTo(0.5, 0.5);
 
@@ -160,7 +184,7 @@ function create() {
 
     game.sound.setDecodedCallback([backgroundfx, tapfx, applausefx].concat(randomfx), start, this);
 
-    
+    setLevel(0);
 }
 
 function render() {
@@ -173,107 +197,62 @@ function start() {
 }
 
 function update() {
-    if (flow > 0.005) {
-        flow -= 0.005;
-    }
-    setLevel(parseInt(flow));
+
 }
 
 function tap(pointer) {
-    var point = {
-        x: (pointer.clientX / screen.width).toFixed(2),
-        y: (pointer.clientY / screen.height).toFixed(2)
-    };
-
-    //console.log(point);
-
-    if (point.y > 0.7) {
-        if (point.x < 0.33) {
-            click(1);
-        } else if (point.x > 0.33 && point.x < 0.66) {
-            click(2);
-        } else if (point.x > 0.66) {
-            click(3);
-        }
-    }
+    click();
 }
 
 function setLevel(level) {
-    if (level === lastLevel) {
-        return;
-    }
-    switch (level) {
+
+    switch(level){
         case 0:
-            trump.frame = yun.frame = putin.frame = 0;
             merkel.visible = bells.visible = birds.visible = butterfly.visible = false;
             SetFlowerSpeed(false);
             break;
         case 1:
-            PlayRandomSound();
-            break;
-        case 2:
-            if (vibratorfx.isPlaying) {
-                vibratorfx.stop();
-            }
-            SetFlowerSpeed(1, 0.3);
-            break;
-        case 3:
-            merkel.visible = bells.visible = true;
-            merkel.frame = 0;
-            bells.animations.add('animate').play(2, true);
-            trump.frame = 1;
-            break;
-        case 4:
-            yun.frame = 1;
-            PlayRandomSound();
+            game.add.tween(rainbow).to({y: height * 0.445 }, 2000, "Linear", true, 0);
+            birds.visible = true;
+            birds.animations.add('animate').play(2, true);
+            SetFlowerSpeed(3, 0.5);
+            vibrator.animations.currentAnim.speed = 5;
+            rainbow.animations.currentAnim.speed = 3;
             butterfly.visible = true;
             butterfly.animations.add('animate').play(2, true);
-            if (applausefx.isPlaying) {
-                applausefx.stop();
-            }
+            vibratorfx_1.loopFull(1);
             break;
-        case 5:
-            putin.frame = 1;
-            bells.animations.add('animate').play(6, true);
-            SetFlowerSpeed(3, 0.55);
+        case 2:
+            trump.loadTexture('trump_02');
+            trump.animations.add('animate').play(0.5 + Math.random(), true);
+            yun.loadTexture('yun_02');
+            yun.animations.add('animate').play(0.5 + Math.random(), true);
+            putin.loadTexture('putin_02');
+            putin.animations.add('animate').play(0.5 + Math.random(), true);
+            bells.visible = true;
+            bells.animations.add('animate').play(2, true);
+            vibrator.animations.currentAnim.speed = 8;
+            rainbow.animations.currentAnim.speed = 5;
+            butterfly.animations.currentAnim.speed = 5;
+            birds.animations.currentAnim.speed = 4;
+            vibratorfx_1.stop();
+            vibratorfx_2.loopFull(1);
             break;
-        case 6:
+        case 3:
             merkel.visible = true;
-            if (!applausefx.isPlaying) {
-                applausefx.play();
-            }
             merkel.frame = 1;
-            if (!vibratorfx.isPlaying) {
-                vibratorfx.loopFull(0.6);
-            }
-            butterfly.animations.add('animate').play(5, true);
-            PlayRandomSound();
-            break;
-        case 7:
-            yun.frame = 2;
-            rainbow.loadTexture('rainbow');
-            done = false;
-            SetFlowerSpeed(4, 0.8);
-            break;
-        case 8:
-            birds.visible = true;
-            birds.animations.add('animate').play(3, true);
-            putin.frame = 2;
-            PlayRandomSound();
-            break;
-        case 9:
-            trump.frame = 2;
-            if (!done) {
-                done = true;
-                rainbow.loadTexture('rainbow_done');
-                rainbow.animations.add('animate').play(7, true);
-            }
+            game.add.tween(merkel).to({x: width * 0.5}, 2000, "Linear", true, 0);
+            setTimeout(function () {
+                merkel.frame = 2;
+                applausefx.play();
+            }, 2250);
+            birds.animations.currentAnim.speed = 7;
+            vibrator.animations.currentAnim.speed = 15;
+            rainbow.animations.currentAnim.speed = 7;
+            vibratorfx_2.stop();
+            vibratorfx_3.loopFull(1);
             break;
     }
-    if (!done) {
-        rainbow.frame = level;
-    }
-    lastLevel = level;
 }
 
 var sound;
@@ -302,26 +281,11 @@ function SetFlowerSpeed(speed, chance) {
     }
 }
 
-function click(id) {
-    if (id === idToClick) {
+function click() {
+    if(level < 3){
         tapfx.play();
-        if (flow < 9) {
-            flow += 1;
-        }
-        idToClick = GetButton();
-        vibrator.frame = idToClick;
-    } else {
-        if ((flow - 0.05) > 0) {
-            flow -= 2;
-        }
+        level++;
+        setLevel(level);
+        console.log("Level " + level);
     }
-}
-
-function GetButton() {
-    var id = parseInt(Math.random() * 3) + 1;
-    if (lastId === id) {
-        id = lastId === 2 ? 1 : 2;
-    }
-    lastId = id;
-    return id;
 }
