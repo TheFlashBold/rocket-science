@@ -1,4 +1,4 @@
-var scale = 1;
+var scale = 1.5;
 var height = 667 * scale;
 var width = 375 * scale;
 
